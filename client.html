@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<head>
+  <title>Pusher Test</title>
+  <script src="https://js.pusher.com/4.3/pusher.min.js"></script>
+  <script>
+
+    // Enable pusher logging - don't include this in production
+    Pusher.logToConsole = true;
+
+    var pusher = new Pusher(YOUR_APP_KEY, {
+      cluster: YOUR_CLUSTER,
+      forceTLS: true
+    });
+
+    function bindWithChunking(channel, event, callback) {
+      channel.bind(event, callback); // Allow normal unchunked events.
+
+      // Now the chunked variation. Allows arbitrarily long messages.
+      var events = {};
+      channel.bind("chunked-my-event", data => {
+        if (!events.hasOwnProperty(data.id)) {
+          events[data.id] = { chunks: [], receivedFinal: false };
+        }
+        var ev = events[data.id];
+        ev.chunks[data.index] = data.chunk;
+        if (data.final) ev.receivedFinal = true;
+        if (ev.receivedFinal && ev.chunks.length === Object.keys(ev.chunks).length) {
+          callback(JSON.parse(ev.chunks.join("")));
+          delete events[data.id];
+        }
+      });
+    }
+
+    var channel = pusher.subscribe('my-channel');
+
+    bindWithChunking(channel, "my-event", data => {
+      alert(JSON.stringify(data));
+    });
+
+  </script>
+</head>
+<body>
+  <h1>Pusher chunking example</h1>
+  <p>
+    Try publishing an event to channel <code>my-channel</code>
+    with event name <code>my-event</code>.
+  </p>
+</body>

@@ -1,0 +1,8 @@
+{
+  "name": "pusher-channels-chunking-example",
+  "version": "1.0.0",
+  "main": "chunked.js",
+  "dependencies": {
+    "pusher": "^2.2.0"
+  }
+}
