@@ -19,7 +19,7 @@ function triggerChunked(channel, event, data) {
       id: msgId, 
       index: i, 
       chunk: str.substr(i*chunkSize, chunkSize), 
-      final: i*(chunkSize+1) >= str.length
+      final: chunkSize*(i+1) >= str.length
     });
   }
 }
