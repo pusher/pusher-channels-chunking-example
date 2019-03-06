@@ -4,20 +4,13 @@
   <script src="https://js.pusher.com/4.3/pusher.min.js"></script>
   <script>
 
-    // Enable pusher logging - don't include this in production
-    Pusher.logToConsole = true;
-
-    var pusher = new Pusher(YOUR_APP_KEY, {
-      cluster: YOUR_CLUSTER,
-      forceTLS: true
-    });
-
+    // Portable function you can copy-paste
     function bindWithChunking(channel, event, callback) {
       channel.bind(event, callback); // Allow normal unchunked events.
 
       // Now the chunked variation. Allows arbitrarily long messages.
       var events = {};
-      channel.bind("chunked-my-event", data => {
+      channel.bind("chunked-" + event, data => {
         if (!events.hasOwnProperty(data.id)) {
           events[data.id] = { chunks: [], receivedFinal: false };
         }
@@ -31,8 +24,13 @@
       });
     }
 
+    // Example usage
+    Pusher.logToConsole = true;
+    var pusher = new Pusher(YOUR_APP_KEY, {
+      cluster: YOUR_CLUSTER,
+      forceTLS: true
+    });
     var channel = pusher.subscribe('my-channel');
-
     bindWithChunking(channel, "my-event", data => {
       alert(JSON.stringify(data));
     });
