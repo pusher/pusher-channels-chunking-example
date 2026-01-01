@@ -3,6 +3,6 @@
   "version": "1.0.0",
   "main": "chunked.js",
   "dependencies": {
-    "pusher": "^2.2.0"
+    "pusher": "^5.2.0"
   }
 }
